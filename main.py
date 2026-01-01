@@ -31,6 +31,11 @@ class Hotel:  # Hotel class to manage hotel bookings
             return False
 
 
+class SpaHotel(Hotel):  # Subclass of Hotel for Spa Hotels
+    def book_spa(self):
+        pass
+
+
 class ReservationTicket:  # Class to generate reservation tickets
     # Initialize with customer name and hotel object
     def __init__(self, customer_name, hotel_object):
@@ -42,6 +47,21 @@ class ReservationTicket:  # Class to generate reservation tickets
         Here are your booking data:
          Name : {self.customer_name}
          Hotel name: {self.hotel.name}'''
+        return content
+
+
+class ReservationSpa:  # Class to generate reservation tickets for Spa Hotels
+    # Initialize with customer name and spa hotel object
+    def __init__(self, customer_name, spa_hotel_object):
+        self.customer_name = customer_name
+        self.spa_hotel = spa_hotel_object  # Store spa hotel object
+
+    # Generate reservation ticket content for spa hotel
+    def generate_spa_reservation(self):
+        content = f'''Thank you for your reservation at our Spa Hotel, 
+        Here are your SPA booking data:
+         Name : {self.customer_name}
+         Hotel name: {self.spa_hotel.name}'''
         return content
 
 
@@ -77,7 +97,7 @@ print(df)
 # User input for hotel ID
 hotel_ID = input("Enter hotel id: ")
 # Create Hotel instance object
-hotel = Hotel(hotel_ID)
+hotel = SpaHotel(hotel_ID)
 # Check availability and book if available
 if hotel.available():
     # Create CreditCard instance (not used further in this example)
@@ -86,7 +106,7 @@ if hotel.available():
     if credit_card.validate(expiration="12/26",
                             cvc="123", holder="JOHN SMITH"):
         # Authenticate the credit card with dummy password
-        if credit_card.authenticate(given_password="my_pass"):
+        if credit_card.authenticate(given_password="mypass"):
             # Call book method to book the hotel
             hotel.book()
             # User input for customer name
@@ -95,6 +115,13 @@ if hotel.available():
             reservation_ticket = ReservationTicket(
                 customer_name=name, hotel_object=hotel)
             print(reservation_ticket.generate())
+            spa_package = input("Do you want to add a spa package? (yes/no): ")
+            if spa_package.lower() == 'yes':
+                hotel.book_spa()
+                # Create ReservationSpa instance and generate spa reservation ticket
+                reservation_spa = ReservationSpa(
+                    customer_name=name, spa_hotel_object=hotel)
+                print(reservation_spa.generate_spa_reservation())
         else:
             print("Authentication failed")
     else:
